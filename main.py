@@ -60,15 +60,11 @@ async def ping_ip(ip_address, available_ips, unavailable_ips):
 
 async def ping_port_page():
     """Render the page for port scanning"""
-    # Input IP address, start port number, and end port number
-    ip_address, start_port, end_port = await input_group(
-        "Enter the IP Address, start port number, and end port number:",
-        [
-            input("IP Address:", type=TEXT),
-            input("Start port number:", type=NUMBER),
-            input("End port number:", type=NUMBER)
-        ]
-    )
+    put_text("Enter the IP Address, start port number, and end port number:")
+
+    ip_address = await input("IP Address:", type=TEXT)
+    start_port = await input("Start port number:", type=NUMBER)
+    end_port = await input("End port number:", type=NUMBER)
 
     put_text("Scanning ports...")
 
@@ -81,12 +77,16 @@ async def ping_port_page():
         else:
             unavailable_ports.append(port)
 
-    # Display available and unavailable ports
+    # Display available and unavailable ports in tables
     put_text("Available ports:")
-    put_text(', '.join(map(str, available_ports)))
+    put_table(_split_list(available_ports, 19))
 
     put_text("Unavailable ports:")
-    put_text(', '.join(map(str, unavailable_ports)))
+    put_table(_split_list(unavailable_ports, 19))
+
+def _split_list(lst, n):
+    """Split list into sublists of length n"""
+    return [lst[i:i+n] for i in range(0, len(lst), n)]
 
 async def check_port(ip_address, port):
     """Check if a port is open on the specified IP address"""
